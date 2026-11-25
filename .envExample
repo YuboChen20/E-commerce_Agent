@@ -1,0 +1,23 @@
+# Copiad este fichero como .env y rellenadlo. El .env NO se sube a GitHub.
+
+# Orden de proveedores de IA: si el primero falla se usa el siguiente
+IA_ORDEN=claude,gemini
+
+# Claude: clave de https://platform.claude.com -> API Keys
+ANTHROPIC_API_KEY=
+CLAUDE_MODEL=claude-haiku-5-5
+
+# Gemini: clave de https://aistudio.google.com -> Get API key
+GEMINI_API_KEY=
+GEMINI_MODEL=gemini-3.8-flash
+# Si el principal está saturado se prueban estos (separados por comas)
+GEMINI_MODELOS_RESERVA=gemini-3.5-flash-lite
+
+# Supabase: Project Settings -> API (dejadlo vacío para usar fake_data.py)
+SUPABASE_URL=
+SUPABASE_ANON_KEY=
+# Clave secreta: solo para el servidor y los scripts. Nunca en la web.
+SUPABASE_SERVICE_KEY=
+
+# Orígenes permitidos (separados por comas): la web en local y en Vercel
+CORS_ORIGENES=http://localhost:5173
