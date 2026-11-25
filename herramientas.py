@@ -4,8 +4,8 @@ Lee los datos de datos.py (PRODUCTOS, OFERTAS, RESEÑAS, COMPLEMENTOS).
 """
 import re
 
-from fake_data import PRODUCTOS, OFERTAS, RESEÑAS
-from fake_data import COMPLEMENTOS as RELACIONADOS
+from datos import PRODUCTOS, OFERTAS, RESEÑAS
+from datos import COMPLEMENTOS as RELACIONADOS
 
 # ---------- Configuración ----------
 PESOS = {"precio": 0.35, "envio": 0.15, "entrega": 0.25, "valoracion": 0.25}  # suman 1.0
@@ -64,12 +64,13 @@ def obtener_ofertas(producto_id: str) -> dict:
     for o in del_producto:
         nota = notas[o["vendedor"]]
         p_nota = NEUTRO if nota is None else _normalizar(nota, notas_conocidas, False)
-        puntos = (
-            PESOS["precio"] * _normalizar(o["precio"], precios, True)
-            + PESOS["envio"] * _normalizar(o["envio"], envios, True)
-            + PESOS["entrega"] * _normalizar(o["dias_entrega"], dias, True)
-            + PESOS["valoracion"] * p_nota
-        )
+        desglose = {  # puntos que aporta cada criterio (suman la puntuación 0-100)
+            "precio": 100 * PESOS["precio"] * _normalizar(o["precio"], precios, True),
+            "envio": 100 * PESOS["envio"] * _normalizar(o["envio"], envios, True),
+            "entrega": 100 * PESOS["entrega"] * _normalizar(o["dias_entrega"], dias, True),
+            "valoracion": 100 * PESOS["valoracion"] * p_nota,
+        }
+        puntos = sum(desglose.values()) / 100
         ofertas.append({
             "oferta_id": o["oferta_id"],
             "vendedor": o["vendedor"],
@@ -80,6 +81,7 @@ def obtener_ofertas(producto_id: str) -> dict:
             "valoracion": None if nota is None else round(nota, 1),
             "num_resenas": sum(1 for r in limpias if r["vendedor"] == o["vendedor"]),
             "puntuacion": round(puntos * 100, 1),
+            "desglose": {k: round(v, 1) for k, v in desglose.items()},
         })
 
     ofertas.sort(key=lambda x: x["puntuacion"], reverse=True)
